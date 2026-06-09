@@ -63,7 +63,7 @@ export default function RegisterPage() {
     <div className="flex min-h-screen items-center justify-center bg-background">
       <div className="w-full max-w-md space-y-8 rounded-lg border bg-card p-8 shadow-lg">
         <div className="text-center">
-          <h2 className="text-3xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+          <h2 className="text-3xl font-bold bg-linear-to-r from-primary to-accent bg-clip-text text-transparent">
             Create an account
           </h2>
           <p className="mt-2 text-sm text-muted-foreground">
