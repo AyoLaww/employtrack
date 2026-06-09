@@ -2,10 +2,11 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { db } from "@/lib/db";
 import { jobApplications } from "@/lib/db/schema";
-import { eq, desc, asc } from "drizzle-orm";
+import { eq, desc, asc, count, and } from "drizzle-orm"; // added "and"
 import { AddApplicationDialog } from "@/components/add-application-dialog";
 import { ApplicationsTable } from "@/components/applications-table";
 import type { FilterType, SortType } from "@/components/application-filters";
+import { redirect } from "next/navigation";
 
 export default async function DashboardPage({
   searchParams,
@@ -17,28 +18,44 @@ export default async function DashboardPage({
   });
 
   if (!session) {
-    return null;
+    redirect("/auth/login");
   }
 
   const params = await searchParams;
-  const sortOrder = params.sort === "earliest" ? asc : desc;
-  
-  const allApplications = await db
-    .select()
-    .from(jobApplications)
-    .where(eq(jobApplications.userId, session.user.id))
-    .orderBy(sortOrder(jobApplications.appliedDate));
-
   const filter = (params.filter || "all") as FilterType;
-  const applications = filter === "all" 
-    ? allApplications 
-    : allApplications.filter((app) => app.status === filter);
-
   const sort = (params.sort || "latest") as SortType;
+  const sortOrder = sort === "earliest" ? asc : desc;
+
+  const [stats, applications] = await Promise.all([
+    db
+      .select({
+        status: jobApplications.status,
+        count: count(),
+      })
+      .from(jobApplications)
+      .where(eq(jobApplications.userId, session.user.id))
+      .groupBy(jobApplications.status),
+
+    db
+      .select()
+      .from(jobApplications)
+      .where(
+        filter === "all"
+          ? eq(jobApplications.userId, session.user.id)
+          : and(
+              eq(jobApplications.userId, session.user.id),
+              eq(jobApplications.status, filter)
+            )
+      )
+      .orderBy(sortOrder(jobApplications.appliedDate)),
+  ]);
+
+  const getCount = (status: string) =>
+    stats.find((s) => s.status === status)?.count ?? 0;
+  const totalCount = stats.reduce((sum, s) => sum + s.count, 0);
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div>
         <h2 className="text-2xl font-bold">Dashboard</h2>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -46,48 +63,21 @@ export default async function DashboardPage({
         </p>
       </div>
 
-      {/* Stats - Updated with new theme colors */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-6">
-        <StatCard
-          title="Total"
-          value={allApplications.length}
-          variant="primary"
-        />
-        <StatCard
-          title="Applied"
-          value={allApplications.filter((app) => app.status === "applied").length}
-          variant="secondary"
-        />
-        <StatCard
-          title="Interviewing"
-          value={allApplications.filter((app) => app.status === "interviewing").length}
-          variant="warning"
-        />
-        <StatCard
-          title="Offer"
-          value={allApplications.filter((app) => app.status === "offer").length}
-          variant="accent"
-        />
-        <StatCard
-          title="Accepted"
-          value={allApplications.filter((app) => app.status === "accepted").length}
-          variant="success"
-        />
-        <StatCard
-          title="Rejected"
-          value={allApplications.filter((app) => app.status === "rejected").length}
-          variant="destructive"
-        />
+        <StatCard title="Total"        value={totalCount}               variant="primary" />
+        <StatCard title="Applied"      value={getCount("applied")}      variant="secondary" />
+        <StatCard title="Interviewing" value={getCount("interviewing")} variant="warning" />
+        <StatCard title="Offer"        value={getCount("offer")}        variant="accent" />
+        <StatCard title="Accepted"     value={getCount("accepted")}     variant="success" />
+        <StatCard title="Rejected"     value={getCount("rejected")}     variant="destructive" />
       </div>
 
-      {/* Applications List */}
       <div className="rounded-lg border bg-card p-6 shadow-sm">
         <div className="mb-4 flex items-center justify-between">
           <h3 className="text-lg font-semibold">Your Applications</h3>
           <AddApplicationDialog />
         </div>
-
-        <ApplicationsTable 
+        <ApplicationsTable
           applications={applications}
           currentFilter={filter}
           currentSort={sort}
@@ -97,22 +87,21 @@ export default async function DashboardPage({
   );
 }
 
-// Updated StatCard with theme-based variants
-function StatCard({ 
-  title, 
-  value, 
-  variant = "primary" 
-}: { 
-  title: string; 
-  value: number; 
+function StatCard({
+  title,
+  value,
+  variant = "primary",
+}: {
+  title: string;
+  value: number;
   variant?: "primary" | "secondary" | "accent" | "warning" | "success" | "destructive";
 }) {
   const variants = {
-    primary: "bg-primary/10 text-primary border-primary/20",
-    secondary: "bg-secondary text-secondary-foreground border-border",
-    accent: "bg-accent/10 text-accent border-accent/20",
-    warning: "bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20",
-    success: "bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/20",
+    primary:     "bg-primary/10 text-primary border-primary/20",
+    secondary:   "bg-secondary text-secondary-foreground border-border",
+    accent:      "bg-accent/10 text-accent border-accent/20",
+    warning:     "bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20",
+    success:     "bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/20",
     destructive: "bg-destructive/10 text-destructive border-destructive/20",
   };
 
