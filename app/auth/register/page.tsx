@@ -63,17 +63,17 @@ export default function RegisterPage() {
     <div className="flex min-h-screen items-center justify-center bg-background">
       <div className="w-full max-w-md space-y-8 rounded-lg border bg-card p-8 shadow-lg">
         <div className="text-center">
-          <h2 className="text-3xl font-bold bg-linear-to-r from-primary to-accent bg-clip-text text-transparent">
+          <h2 className="text-4xl font-serif">
             Create an account
           </h2>
-          <p className="mt-2 text-sm text-muted-foreground">
+          <p className="mt-2 text-sm text-muted-foreground font-sans tracking-tighter">
             Start tracking your job applications
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-6">
           {error && (
-            <div className="rounded-md border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
+            <div className="rounded-[3px] border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive font-sans tracking-tighter">
               {error}
             </div>
           )}
@@ -120,13 +120,13 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          <Button type="submit" className="w-full" disabled={loading}>
+          <Button type="submit" className="w-full hover:cursor-pointer border-border-gray rounded-[3px] bg-black text-white text-[14px] font-serif" disabled={loading}>
             {loading ? "Creating account..." : "Sign up"}
           </Button>
 
-          <p className="text-center text-sm text-muted-foreground">
+          <p className="text-center text-sm text-muted-foreground font-sans tracking-tighter">
             Already have an account?{" "}
-            <Link href="/auth/login" className="font-medium text-primary hover:text-primary/80 transition-colors">
+            <Link href="/auth/login" className="font-medium text-primary hover:text-primary/80 transition-colors font-sans tracking-tighter hover:cursor-pointer">
               Sign in
             </Link>
           </p>
