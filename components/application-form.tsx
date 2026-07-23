@@ -114,7 +114,7 @@ export function ApplicationForm({ application, onSuccess }: ApplicationFormProps
       </div>
 
       <div className="flex justify-end gap-2 pt-4">
-        <Button type="submit" disabled={loading}>
+        <Button type="submit" disabled={loading} className="w-full hover:cursor-pointer border-border-gray rounded-[3px] bg-black text-white text-[14px] font-serif">
           {loading ? "Saving..." : application ? "Update" : "Create"}
         </Button>
       </div>

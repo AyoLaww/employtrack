@@ -15,13 +15,13 @@ export function AddApplicationDialog() {
   const [open, setOpen] = useState(false);
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={setOpen} >
       <DialogTrigger asChild>
-        <Button>Add Application</Button>
+        <Button className="hover:cursor-pointer border-border-gray rounded-[3px] bg-black text-white text-[14px] font-serif">Add Application</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Add New Application</DialogTitle>
+          <DialogTitle className="text-[24px] font-serif">Add New Application</DialogTitle>
         </DialogHeader>
         <ApplicationForm onSuccess={() => setOpen(false)} />
       </DialogContent>

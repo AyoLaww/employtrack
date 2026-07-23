@@ -5,6 +5,7 @@ import type { JobApplication } from "@/lib/db/schema";
 import { EditApplicationDialog } from "./edit-application-dialog";
 import { DeleteApplicationButton } from "./delete-application-dialog";
 import { ApplicationFilters, FilterType, SortType } from "./application-filters";
+import { StatusBadge } from "./status-badge";
 
 interface ApplicationsTableProps {
   applications: JobApplication[];
@@ -65,19 +66,19 @@ export function ApplicationsTable({
           <table className="min-w-full divide-y divide-border">
             <thead>
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                <th className="px-6 py-3 text-left text-[16px] font-medium uppercase  text-muted-foreground font-serif">
                   Company
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                <th className="px-6 py-3 text-left text-[16px] font-medium uppercase text-muted-foreground font-serif">
                   Position
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                <th className="px-6 py-3 text-left text-[16px] font-medium uppercase text-muted-foreground font-serif">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                <th className="px-6 py-3 text-left text-[16px] font-medium uppercase text-muted-foreground font-serif">
                   Applied Date
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                <th className="px-6 py-3 text-left text-[16px] font-medium uppercase text-muted-foreground font-serif">
                   Actions
                 </th>
               </tr>
@@ -85,16 +86,16 @@ export function ApplicationsTable({
             <tbody className="divide-y divide-border bg-card">
               {applications.map((app) => (
                 <tr key={app.id} className="hover:bg-muted/50 transition-colors">
-                  <td className="whitespace-nowrap px-6 py-4 text-sm font-medium">
+                  <td className="whitespace-nowrap px-6 py-4 text-sm font-medium font-sans tracking-tighter">
                     {app.companyName}
                   </td>
-                  <td className="whitespace-nowrap px-6 py-4 text-sm text-muted-foreground">
+                  <td className="whitespace-nowrap px-6 py-4 text-sm text-muted-foreground font-sans tracking-tighter">
                     {app.jobTitle}
                   </td>
                   <td className="whitespace-nowrap px-6 py-4 text-sm">
                     <StatusBadge status={app.status} />
                   </td>
-                  <td className="whitespace-nowrap px-6 py-4 text-sm text-muted-foreground">
+                  <td className="whitespace-nowrap px-6 py-4 text-sm text-muted-foreground font-sans tracking-tighter">
                     {new Date(app.appliedDate).toLocaleDateString()}
                   </td>
                   <td className="whitespace-nowrap px-6 py-4 text-sm space-x-2">
@@ -111,19 +112,3 @@ export function ApplicationsTable({
   );
 }
 
-// Updated StatusBadge with theme colors
-function StatusBadge({ status }: { status: string }) {
-  const variants: Record<string, string> = {
-    applied: "bg-secondary text-secondary-foreground border-border",
-    interviewing: "bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20",
-    offer: "bg-purple-500/10 text-purple-700 dark:text-purple-400 border-purple-500/20",
-    accepted: "bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/20",
-    rejected: "bg-red-500/10 text-red-700 dark:text-red-400 border-red-500/20",
-  };
-
-  return (
-    <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold ${variants[status]}`}>
-      {status.charAt(0).toUpperCase() + status.slice(1)}
-    </span>
-  );
-}
