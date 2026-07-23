@@ -24,6 +24,7 @@ export function LogoutButton() {
 
   return (
     <Button
+      className="border-border-gray rounded-[3px] w-full bg-black text-white text-[16px] font-serif hover:cursor-pointer"
       onClick={handleLogout}
       disabled={loading}
       variant="outline"

@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { LogoutButton } from "@/components/logout-button";
+import { Sidebar } from "@/components/sidebar";
 
 export default async function DashboardLayout({
   children,
@@ -17,30 +17,9 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Navigation with theme colors */}
-      <nav className="border-b bg-card/50 backdrop-blur supports-[backdrop-filter]:bg-card/60">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 justify-between">
-            <div className="flex">
-              <div className="flex shrink-0 items-center">
-                <h1 className="text-xl font-bold bg-linear-to-r from-primary to-accent bg-clip-text text-transparent">
-                  Job Tracker
-                </h1>
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <span className="text-sm text-muted-foreground">
-                {session.user.name || session.user.email}
-              </span>
-              <LogoutButton />
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      {/* Main Content */}
-      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="flex min-h-screen bg-background">
+      <Sidebar />
+      <main className="flex-1 overflow-y-auto px-4 py-8 sm:px-6 lg:px-8">
         {children}
       </main>
     </div>

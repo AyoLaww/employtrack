@@ -7,6 +7,7 @@ import { AddApplicationDialog } from "@/components/add-application-dialog";
 import { ApplicationsTable } from "@/components/applications-table";
 import type { FilterType, SortType } from "@/components/application-filters";
 import { redirect } from "next/navigation";
+import { StatCard } from "@/components/stat-card";
 
 export default async function DashboardPage({
   searchParams,
@@ -57,24 +58,24 @@ export default async function DashboardPage({
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold">Dashboard</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <h2 className="text-[72px] font-serif">Hello, {session.user.name}.</h2>
+        <p className="mt-1 text-[24px] text-muted-foreground font-sans tracking-tighter">
           Track and manage your job applications
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-6">
-        <StatCard title="Total"        value={totalCount}               variant="primary" />
-        <StatCard title="Applied"      value={getCount("applied")}      variant="secondary" />
-        <StatCard title="Interviewing" value={getCount("interviewing")} variant="warning" />
-        <StatCard title="Offer"        value={getCount("offer")}        variant="accent" />
-        <StatCard title="Accepted"     value={getCount("accepted")}     variant="success" />
-        <StatCard title="Rejected"     value={getCount("rejected")}     variant="destructive" />
+      <div className="flex flex-row gap-4">
+        <StatCard title="Total"        value={totalCount}               variant="Total" />
+        <StatCard title="Applied"      value={getCount("applied")}      variant="Applied" />
+        <StatCard title="Interviewing" value={getCount("interviewing")} variant="Interviewing" />
+        <StatCard title="Offer"        value={getCount("offer")}        variant="Offer" />
+        <StatCard title="Accepted"     value={getCount("accepted")}     variant="Accepted" />
+        <StatCard title="Rejected"     value={getCount("rejected")}     variant="Rejected" />
       </div>
 
-      <div className="rounded-lg border bg-card p-6 shadow-sm">
+      <div className="rounded-[3px] border bg-off-white border-border-gray p-[24px]">
         <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-lg font-semibold">Your Applications</h3>
+          <h3 className="text-[24px] font-serif">Your Applications</h3>
           <AddApplicationDialog />
         </div>
         <ApplicationsTable
@@ -87,28 +88,3 @@ export default async function DashboardPage({
   );
 }
 
-function StatCard({
-  title,
-  value,
-  variant = "primary",
-}: {
-  title: string;
-  value: number;
-  variant?: "primary" | "secondary" | "accent" | "warning" | "success" | "destructive";
-}) {
-  const variants = {
-    primary:     "bg-primary/10 text-primary border-primary/20",
-    secondary:   "bg-secondary text-secondary-foreground border-border",
-    accent:      "bg-accent/10 text-accent border-accent/20",
-    warning:     "bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20",
-    success:     "bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/20",
-    destructive: "bg-destructive/10 text-destructive border-destructive/20",
-  };
-
-  return (
-    <div className={`rounded-lg border p-4 transition-all hover:shadow-md ${variants[variant]}`}>
-      <p className="text-sm font-medium opacity-90">{title}</p>
-      <p className="mt-2 text-3xl font-bold">{value}</p>
-    </div>
-  );
-}

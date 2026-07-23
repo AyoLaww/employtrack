@@ -54,7 +54,7 @@ export function ApplicationFilters({
       {/* Status Filter Dropdown */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" className="gap-2">
+          <Button variant="outline" className="border-border-gray rounded-[3px] bg-off-white text-black text-[14px] font-sans tracking-tighter">
             Status: {getCurrentFilterLabel()}
             <ChevronDown className="h-4 w-4" />
           </Button>
@@ -78,7 +78,7 @@ export function ApplicationFilters({
       {/* Sort Dropdown */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" className="gap-2">
+          <Button variant="outline" className="border-border-gray rounded-[3px] bg-off-white text-black text-[14px] font-sans tracking-tighter">
             Sort: {getCurrentSortLabel()}
             <ChevronDown className="h-4 w-4" />
           </Button>
