@@ -2,8 +2,6 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { CheckCircle2, BarChart3, Clock, Target } from "lucide-react"
 import Link from "next/link"
 import Logo from "@/public/images/Logo.svg";
 import headerImage from "@/public/images/header-image.png";
