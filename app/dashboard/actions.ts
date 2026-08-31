@@ -4,8 +4,8 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { db } from "@/lib/db";
 import { jobApplications } from "@/lib/db/schema";
-import { revalidatePath } from "next/cache";
-import { eq } from "drizzle-orm";
+import { updateTag } from "next/cache";
+import { eq, and } from "drizzle-orm";
 
 type ApplicationStatus = "applied" | "interviewing" | "offer" | "accepted" | "rejected";
 
@@ -20,7 +20,6 @@ export async function createApplication(formData: FormData) {
 
   const companyName = formData.get("companyName") as string;
   const jobTitle = formData.get("jobTitle") as string;
-  // const applicationUrl = formData.get("applicationUrl") as string;
   const status = formData.get("status") as ApplicationStatus;
   const appliedDate = formData.get("appliedDate") as string;
 
@@ -28,12 +27,11 @@ export async function createApplication(formData: FormData) {
     userId: session.user.id,
     companyName,
     jobTitle,
-    // applicationUrl: applicationUrl || null,
     status,
     appliedDate: new Date(appliedDate),
   });
 
-  revalidatePath("/dashboard");
+  updateTag(`applications-${session.user.id}`);
 }
 
 export async function updateApplication(id: string, formData: FormData) {
@@ -47,23 +45,31 @@ export async function updateApplication(id: string, formData: FormData) {
 
   const companyName = formData.get("companyName") as string;
   const jobTitle = formData.get("jobTitle") as string;
-  // const applicationUrl = formData.get("applicationUrl") as string;
   const status = formData.get("status") as ApplicationStatus;
   const appliedDate = formData.get("appliedDate") as string;
 
-  await db
+  const result = await db
     .update(jobApplications)
     .set({
       companyName,
       jobTitle,
-      // applicationUrl: applicationUrl || null,
       status,
       appliedDate: new Date(appliedDate),
       updatedAt: new Date(),
     })
-    .where(eq(jobApplications.id, id));
+    .where(
+      and(
+        eq(jobApplications.id, id),
+        eq(jobApplications.userId, session.user.id)
+      )
+    )
+    .returning({ id: jobApplications.id });
 
-  revalidatePath("/dashboard");
+  if (result.length === 0) {
+    throw new Error("Application not found or you don't have permission to edit it");
+  }
+
+  updateTag(`applications-${session.user.id}`);
 }
 
 export async function deleteApplication(id: string) {
@@ -75,7 +81,19 @@ export async function deleteApplication(id: string) {
     throw new Error("Unauthorized");
   }
 
-  await db.delete(jobApplications).where(eq(jobApplications.id, id));
+  const result = await db
+    .delete(jobApplications)
+    .where(
+      and(
+        eq(jobApplications.id, id),
+        eq(jobApplications.userId, session.user.id)
+      )
+    )
+    .returning({ id: jobApplications.id });
 
-  revalidatePath("/dashboard");
+  if (result.length === 0) {
+    throw new Error("Application not found or you don't have permission to delete it");
+  }
+
+  updateTag(`applications-${session.user.id}`);
 }

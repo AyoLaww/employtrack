@@ -13,6 +13,11 @@
 # testing
 /coverage
 
+# test environments
+app/sandbox
+app/test-db
+app/api/test-env
+
 # next.js
 /.next/
 /out/
@@ -32,6 +37,9 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+
+# env example 
+!.env.example
 
 # vercel
 .vercel
