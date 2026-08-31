@@ -59,12 +59,7 @@ A simple and efficient web application for tracking job applications throughout 
 3. **Set up environment variables**
    
    Create a `.env.local` file in the root directory:
-   ```env
-   DATABASE_URL=your-neon-connection-string
-   BETTER_AUTH_SECRET=your-secret-key
-   BETTER_AUTH_URL=http://localhost:3000
-   NEXT_PUBLIC_APP_URL=http://localhost:3000
-   ```
+   see `.env.local for an`
 
    To generate `BETTER_AUTH_SECRET`:
    ```bash
@@ -114,15 +109,35 @@ A simple and efficient web application for tracking job applications throughout 
 - createdAt
 - updatedAt
 
-## Deployment
+## Running Locally with Docker
 
-This project is ready to deploy on [Vercel](https://vercel.com):
+This project can be run in a Docker container for a consistent local environment.
 
-1. Push your code to GitHub
-2. Import the project in Vercel
-3. Add environment variables in Vercel dashboard
-4. Deploy!
+### Prerequisites
 
-## Contributing
+- [Docker](https://www.docker.com/) and Docker Compose installed
+- A Neon database connection string (or your own Postgres-compatible `DATABASE_URL`)
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+### Setup
+
+1. Copy the example environment file and fill in your own values:
+
+```bash
+   cp .env.example .env
+```
+
+   Edit `.env` with your actual `DATABASE_URL`, `BETTER_AUTH_SECRET`, and `BETTER_AUTH_URL`.
+
+2. Build and start the container:
+
+```bash
+   docker compose up --build
+```
+
+3. The app will be available at [http://localhost:3000](http://localhost:3000).
+
+- To stop the container:
+
+```bash
+  docker compose down
+```
