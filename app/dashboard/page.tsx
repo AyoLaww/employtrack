@@ -1,13 +1,11 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { db } from "@/lib/db";
-import { jobApplications } from "@/lib/db/schema";
-import { eq, desc, asc, count, and } from "drizzle-orm"; // added "and"
 import { AddApplicationDialog } from "@/components/add-application-dialog";
 import { ApplicationsTable } from "@/components/applications-table";
 import type { FilterType, SortType } from "@/components/application-filters";
 import { redirect } from "next/navigation";
 import { StatCard } from "@/components/stat-card";
+import { getDashboardData } from "@/lib/db/queries/applications";
 
 export default async function DashboardPage({
   searchParams,
@@ -25,31 +23,12 @@ export default async function DashboardPage({
   const params = await searchParams;
   const filter = (params.filter || "all") as FilterType;
   const sort = (params.sort || "latest") as SortType;
-  const sortOrder = sort === "earliest" ? asc : desc;
 
-  const [stats, applications] = await Promise.all([
-    db
-      .select({
-        status: jobApplications.status,
-        count: count(),
-      })
-      .from(jobApplications)
-      .where(eq(jobApplications.userId, session.user.id))
-      .groupBy(jobApplications.status),
-
-    db
-      .select()
-      .from(jobApplications)
-      .where(
-        filter === "all"
-          ? eq(jobApplications.userId, session.user.id)
-          : and(
-              eq(jobApplications.userId, session.user.id),
-              eq(jobApplications.status, filter)
-            )
-      )
-      .orderBy(sortOrder(jobApplications.appliedDate)),
-  ]);
+  const { stats, applications } = await getDashboardData(
+    session.user.id,
+    filter,
+    sort
+  );
 
   const getCount = (status: string) =>
     stats.find((s) => s.status === status)?.count ?? 0;
@@ -87,4 +66,3 @@ export default async function DashboardPage({
     </div>
   );
 }
-
