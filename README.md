@@ -126,7 +126,7 @@ This project can be run in a Docker container for a consistent local environment
    cp .env.example .env
 ```
 
-   Edit `.env` with your actual `DATABASE_URL`, `BETTER_AUTH_SECRET`, and `BETTER_AUTH_URL`.
+   Edit `.env` with your actual `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, and `NEXT_PUBLIC_BETTER_AUTH_URL`.
 
 2. Build and start the container:
 
